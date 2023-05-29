@@ -21,19 +21,20 @@ public class Block5CommandLineRunnerApplication implements CommandLineRunner {
 	public void claseSecundaria(){
 		System.out.println("Hola desde clase secundaria");
 	}
-
-	public void claseTercera(){
-		System.out.println("Soy la tercera clase");
+	public void claseTercera(String mensaje){
+		System.out.println(mensaje);
 	}
 
 	//La interfaz CommandLineRunner necesita implementar el método run
 	@Override
 	public void run(String... args) throws Exception {
 		claseSecundaria();
-		claseTercera();
+		claseTercera("Soy la tercera clase");
 	}
 }
 
 //El orden en el que se muestran los mensajes se debe a usar PostConstruct y CommandLineRunner de esa forma
 //PostConstruct ejecuta durante la fase de inicialización de Spring, antes de ejecutarse el método run()
 //Luego se ejecuta el método run(), que llama a los métodos en el orden en el que aparecen
+
+//Tercera función: se pasa el mensaje como parámetro, y después se pasa la cadena de texto como argumento al parámetro mensaje
