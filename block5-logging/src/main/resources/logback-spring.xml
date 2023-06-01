@@ -13,8 +13,24 @@
         </filter>
     </appender>
 
+    <!-- Para escribir los logs en un archivo específico -->
+    <appender name="file" class="ch.qos.logback.core.FileAppender">
+        <file>logs/error.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <!-- Establecemos el nivel mínimo en ERROR -->
+            <level>ERROR</level>
+            <!-- Comportamiento en caso de coincidencia y no coincidencia -->
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
     <!-- Configuramos el root con el nivel mínimo -->
     <root level="INFO">
         <appender-ref ref="console" />
+        <appender-ref ref="file" />
     </root>
 </configuration>
