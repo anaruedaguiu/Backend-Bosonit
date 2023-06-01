@@ -8,7 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Block5ProfilesApplication implements CommandLineRunner {
 	@Value("${bd.url}")
-	public String bdUrl;
+	private String bdUrl;
+	@Value("${spring.profiles.active}")
+	private String springProfilesActive;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Block5ProfilesApplication.class, args);
@@ -16,6 +18,7 @@ public class Block5ProfilesApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		System.out.println(bdUrl);
+		System.out.println("Valor de la propiedad bdUrl: " + bdUrl);
+		System.out.println("Perfil activo: " + springProfilesActive);
 	}
 }
