@@ -13,18 +13,30 @@
         </filter>
     </appender>
 
-    <!-- Para escribir los logs en un archivo específico -->
-    <appender name="file" class="ch.qos.logback.core.FileAppender">
-        <file>logs/error.log</file>
+    <!-- Para escribir logs con rotación de archivos... -->
+    <!-- Utiliza la clase RollingfileAppender para guardar logs en archivos de registro -->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- Especifica nombre y ubicación del archivo principal -->
+        <file>logs/spring-logging.log</file>
+        <!-- Crea un archivo nuevo cada vez que se inicia la aplicación -->
+        <prudent>true</prudent>
+        <!-- Define política de rotación del archivo, en este caso según tamaño y tiempo -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- Establece patrón de nombres de archivos. El %i patrón que agrega nº consecutivo -->
+            <fileNamePattern>logs/spring-logging.%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <!-- Define tamaño máximo del archivo, cuando lo alcance rotará -->
+            <maxFileSize>5KB</maxFileSize>
+            <!-- Establece nº máximo de archivos -->
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <!-- Establece patrón de formato para los registros de los archivos. Tiempo, hilo, nivel de log... -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
+        <!-- Define filtro para limitar los registros que se guardan -->
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <!-- Establecemos el nivel mínimo en ERROR -->
+            <!-- Establecemos nivel mínimo de log -->
             <level>ERROR</level>
-            <!-- Comportamiento en caso de coincidencia y no coincidencia -->
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
     </appender>
 
