@@ -4,14 +4,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PersonService {
-    public Person createPerson(String nombre, String poblacion, int edad) {
-        Person person = new Person(nombre, poblacion, edad);
+    public Person createPerson(String personName, String personLocation, int personAge) {
+        Person person = new Person(personName, personLocation, personAge);
         return person;
     }
 
-    public Person addAgePerson(String nombre, String poblacion, int edad) {
-        Person person = new Person(nombre, poblacion, edad);
-        person.setEdad(person.getEdad() * 2);
+    public Person addAgePerson(String personName, String personLocation, int personAge) {
+        Person person = new Person(personName, personLocation, personAge);
+        person.setPersonAge(person.getPersonAge() * 2);
         return person;
     }
 }

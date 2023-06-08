@@ -13,14 +13,14 @@ public class Controlador1 {
     private PersonService personService;
 
     @GetMapping(value="/addPersona")
-    public Person addPerson(@RequestHeader ("nombre") String nombre, @RequestHeader ("poblacion") String poblacion, @RequestHeader ("edad") int edad) {
-        return personService.createPerson(nombre, poblacion, edad); //Se llama al método createPerson de PersonService para crear y retornar objeto tipo Person
+    public Person addPerson(@RequestHeader ("personName") String personName, @RequestHeader ("personLocation") String personLocation, @RequestHeader ("personAge") int personAge) {
+        return personService.createPerson(personName, personLocation, personAge); //Se llama al método createPerson de PersonService para crear y retornar objeto tipo Person
     }
 
     @Autowired
     private CityService cityService;
     @PostMapping(value="/addCiudad")
-    public City addCity(@RequestBody City city) {
+    public City createCity(@RequestBody City city) {
 
         return cityService.addCity(city);
     }

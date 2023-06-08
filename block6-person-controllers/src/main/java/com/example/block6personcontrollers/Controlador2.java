@@ -11,14 +11,14 @@ public class Controlador2 {
     @Autowired
     private PersonService personService;
     @GetMapping(value="/getPersona")
-    public Person getPerson(@RequestHeader ("nombre") String nombre, @RequestHeader ("poblacion") String poblacion, @RequestHeader ("edad") int edad) {
-        return personService.addAgePerson(nombre, poblacion, edad); //Se llama al método addAgePerson de PersonService para crear y retornar objeto tipo Person con edad modificada
+    public Person getPerson(@RequestHeader ("personName") String personName, @RequestHeader ("personLocation") String personLocation, @RequestHeader ("personAge") int personAge) {
+        return personService.addAgePerson(personName, personLocation, personAge); //Se llama al método addAgePerson de PersonService para crear y retornar objeto tipo Person con edad modificada
     }
 
     @Autowired
     private CityService cityService;
     @GetMapping(value="/getCiudades")
-    public List<City> getCities() {
+    public List<City> getAllCities() {
         return cityService.getCities();
     }
 }

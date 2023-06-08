@@ -2,11 +2,11 @@ package com.example.block6personcontrollers;
 
 public class City {
     private String cityName;
-    private int population;
+    private int cityPopulation;
 
-    public City(String cityName, int population) {
+    public City(String cityName, int cityPopulation) {
         this.cityName = cityName;
-        this.population = population;
+        this.cityPopulation = cityPopulation;
     }
 
     public String getCityName() {
@@ -17,11 +17,11 @@ public class City {
         this.cityName = cityName;
     }
 
-    public int getPopulation() {
-        return population;
+    public int getCityPopulation() {
+        return cityPopulation;
     }
 
-    public void setPopulation(int population) {
-        this.population = population;
+    public void setCityPopulation(int cityPopulation) {
+        this.cityPopulation = cityPopulation;
     }
 }

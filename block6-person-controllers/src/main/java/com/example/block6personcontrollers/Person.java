@@ -1,37 +1,37 @@
 package com.example.block6personcontrollers;
 
 public class Person {
-    private String nombre;
-    private String poblacion;
-    private int edad;
+    private String personName;
+    private String personLocation;
+    private int personAge;
 
-    public Person(String nombre, String poblacion, int edad) {
-        this.nombre = nombre;
-        this.poblacion = poblacion;
-        this.edad = edad;
+    public Person(String personName, String personLocation, int personAge) {
+        this.personName = personName;
+        this.personLocation = personLocation;
+        this.personAge = personAge;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getPersonName() {
+        return personName;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setPersonName(String personName) {
+        this.personName = personName;
     }
 
-    public String getPoblacion() {
-        return poblacion;
+    public String getPersonLocation() {
+        return personLocation;
     }
 
-    public void setPoblacion(String poblacion) {
-        this.poblacion = poblacion;
+    public void setPersonLocation(String personLocation) {
+        this.personLocation = personLocation;
     }
 
-    public int getEdad() {
-        return edad;
+    public int getPersonAge() {
+        return personAge;
     }
 
-    public void setEdad(int edad) {
-        this.edad = edad;
+    public void setPersonAge(int personAge) {
+        this.personAge = personAge;
     }
 }
