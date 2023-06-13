@@ -1,4 +1,4 @@
-package com.example.block6personcontrollers;
+package com.example.block6personcontrollers.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

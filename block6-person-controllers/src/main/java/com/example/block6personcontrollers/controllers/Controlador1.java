@@ -1,9 +1,9 @@
-package com.example.block6personcontrollers;
+package com.example.block6personcontrollers.controllers;
 
-import com.example.block6personcontrollers.City;
-import com.example.block6personcontrollers.CityService;
-import com.example.block6personcontrollers.Person;
-import com.example.block6personcontrollers.PersonServiceImpl;
+import com.example.block6personcontrollers.models.City;
+import com.example.block6personcontrollers.models.Person;
+import com.example.block6personcontrollers.servicesImpl.CityServiceImpl;
+import com.example.block6personcontrollers.servicesImpl.PersonServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

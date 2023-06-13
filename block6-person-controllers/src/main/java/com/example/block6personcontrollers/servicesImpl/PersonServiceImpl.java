@@ -1,5 +1,7 @@
-package com.example.block6personcontrollers;
+package com.example.block6personcontrollers.servicesImpl;
 
+import com.example.block6personcontrollers.models.Person;
+import com.example.block6personcontrollers.services.PersonService;
 import org.springframework.stereotype.Service;
 
 @Service
