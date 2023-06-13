@@ -1,8 +1,6 @@
 package com.example.block6personcontrollers;
 
-import com.example.block6personcontrollers.Person;
 import org.springframework.stereotype.Service;
-import com.example.block6personcontrollers.PersonService;
 
 @Service
 public class PersonServiceImpl implements PersonService {
