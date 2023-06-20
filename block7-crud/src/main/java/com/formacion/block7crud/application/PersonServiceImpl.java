@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class PersonServiceImpl implements PersonService{
     @Autowired
@@ -44,5 +47,13 @@ public class PersonServiceImpl implements PersonService{
         personRepository.findById(person.getId()).orElseThrow();
         return personRepository.save(new Person(person))
                 .personToPersonOutputDto();
+    }
+
+    @Override
+    public List<PersonOutputDto> getPersonsByName(String name) {
+        List<Person> persons = personRepository.findByName(name);
+        return persons.stream()
+                .map(Person::personToPersonOutputDto)
+                .toList();
     }
 }
