@@ -16,7 +16,8 @@ public class UpdatePersonController {
     @PutMapping(value="/{id}")
     public ResponseEntity<PersonOutputDto> updatePerson (@RequestBody PersonInputDto person, @PathVariable int id) {
         try {
-            return ResponseEntity.ok().body(personServiceImpl.updatePerson(person));
+            personServiceImpl.getPersonById(person.getId());
+            return ResponseEntity.ok().body(personServiceImpl.updatePerson(person, id));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

@@ -10,6 +10,6 @@ public interface PersonService {
     PersonOutputDto getPersonById(int id);
     void deletePersonById(int id);
     Iterable<PersonOutputDto> getAllPersons(int pageNumber, int pageSize);
-    PersonOutputDto updatePerson(PersonInputDto person);
+    PersonOutputDto updatePerson(PersonInputDto person, int id);
     List<PersonOutputDto> getPersonsByName(String name);
 }
