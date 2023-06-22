@@ -3,6 +3,8 @@ package com.formacion.block7crudvalidation.application;
 import com.formacion.block7crudvalidation.controllers.dto.PersonInputDto;
 import com.formacion.block7crudvalidation.controllers.dto.PersonOutputDto;
 import com.formacion.block7crudvalidation.domain.Person;
+import com.formacion.block7crudvalidation.exceptions.EntityNotFoundException;
+import com.formacion.block7crudvalidation.exceptions.UnprocessableEntityException;
 import com.formacion.block7crudvalidation.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -14,39 +16,25 @@ public class PersonServiceImpl implements PersonService{
     PersonRepository personRepository;
 
     @Override
-    public PersonOutputDto addPerson(PersonInputDto person) throws Exception {
+    public PersonOutputDto addPerson(PersonInputDto person) throws UnprocessableEntityException {
         if(person.getUsername() == null || !(person.getUsername().length()>=6) || !(person.getUsername().length()<=10)) {
-            throw new Exception("Username no puede ser nulo y debe contener entre 6 y 10 caracteres");
+            throw new UnprocessableEntityException();
         }
-        if(person.getPassword() == null) {
-            throw new Exception("Password no puede ser nulo");
-        }
-        if(person.getName() == null) {
-            throw new Exception("Name no puede ser nulo");
-        }
-        if(person.getCompany_email() == null) {
-            throw new Exception("Company email no puede ser nulo");
-        }
-        if(person.getPersonal_email() == null) {
-            throw new Exception("Personal email no puede ser nulo");
-        }
-        if(person.getCity() == null) {
-            throw new Exception("City no puede ser nulo");
-        }
-        if(person.getActive() == null) {
-            throw new Exception("Active no puede ser nulo");
-        }
-        if(person.getCreated_date() == null) {
-            throw new Exception("Created date no puede ser nulo");
+        if(person.getPassword() == null || person.getName() == null || person.getCompany_email() == null || person.getPersonal_email() == null
+        || person.getCity() == null || person.getActive() == null || person.getCreated_date() == null) {
+            throw new UnprocessableEntityException();
         }
         return personRepository.save(new Person(person))
                 .personToPersonOutputDto();
     }
 
     @Override
-    public PersonOutputDto getPersonById(int id) {
+    public PersonOutputDto getPersonById(int id) throws EntityNotFoundException {
+        if(personRepository.findById(id).isEmpty()) {
+            throw new EntityNotFoundException();
+        } else {
         return personRepository.findById(id).orElseThrow()
-                .personToPersonOutputDto();
+                .personToPersonOutputDto();}
     }
 
     @Override
@@ -64,42 +52,48 @@ public class PersonServiceImpl implements PersonService{
     }
 
     @Override
-    public void deletePerson(int id) {
-        personRepository.findById(id).orElseThrow();
-        personRepository.deleteById(id);
+    public void deletePerson(int id) throws EntityNotFoundException {
+        if (personRepository.findById(id).isEmpty()) {
+            throw new EntityNotFoundException();
+        } else {
+            personRepository.deleteById(id);
+        }
     }
 
     @Override
-    public PersonOutputDto updatePerson(PersonInputDto person, int id) {
-        Person personUpdated = personRepository.findById(id).orElseThrow();
-        if(person.getUsername() != null && person.getUsername().length()>=6 && person.getUsername().length()<=10) {
-            personUpdated.setUsername(person.getUsername());
+    public PersonOutputDto updatePerson(PersonInputDto person, int id) throws EntityNotFoundException, UnprocessableEntityException {
+        if (personRepository.findById(id).isEmpty()) {
+            throw new EntityNotFoundException();
+        } else {
+            Person personUpdated = personRepository.findById(id).orElseThrow();
+            if(person.getSurname() != null) {
+                personUpdated.setSurname(person.getSurname());
+            }
+            if(person.getImage_url() != null) {
+                personUpdated.setImage_url(person.getImage_url());
+            }
+            if(person.getTermination_date() != null ){
+                personUpdated.setTermination_date(person.getTermination_date());
+            }
+            if(person.getUsername() != null && person.getUsername().length()>=6 && person.getUsername().length()<=10) {
+                personUpdated.setUsername(person.getUsername());
+            } else {
+                throw new UnprocessableEntityException();
+            }
+            if(person.getPassword() == null || person.getName() == null || person.getCompany_email() == null || person.getPersonal_email() == null
+                    || person.getCity() == null || person.getActive() == null || person.getCreated_date() == null) {
+                throw new UnprocessableEntityException();
+            } else {
+                personUpdated.setPassword(person.getPassword());
+                personUpdated.setName(person.getName());
+                personUpdated.setCompany_email(person.getCompany_email());
+                personUpdated.setPersonal_email(person.getPersonal_email());
+                personUpdated.setCity(person.getCity());
+                personUpdated.setActive(person.getActive());
+                personUpdated.setCreated_date(person.getCreated_date());
+            }
+            return personRepository.save(personUpdated)
+                    .personToPersonOutputDto();
         }
-        if(person.getPassword() != null) {
-            personUpdated.setPassword(person.getPassword());
-        }
-        if(person.getName() != null) {
-            personUpdated.setName(person.getName());
-        }
-        if(person.getCompany_email() != null) {
-            personUpdated.setCompany_email(person.getCompany_email());
-        }
-        if(person.getPersonal_email() != null) {
-            personUpdated.setPersonal_email(person.getPersonal_email());
-        }
-        if(person.getCity() != null) {
-            personUpdated.setCity(person.getCity());
-        }
-        if(person.getActive() != null) {
-            personUpdated.setActive(person.getActive());
-        }
-        if(person.getCreated_date() != null) {
-            personUpdated.setCreated_date(person.getCreated_date());
-        }
-        personUpdated.setSurname(person.getSurname());
-        personUpdated.setImage_url(person.getImage_url());
-        personUpdated.setTermination_date(person.getTermination_date());
-        return personRepository.save(personUpdated)
-                .personToPersonOutputDto();
     }
 }
