@@ -1,6 +1,6 @@
 package com.formacion.block7crudvalidation.controllers;
 
-import com.formacion.block7crudvalidation.application.PersonServiceImpl;
+import com.formacion.block7crudvalidation.application.impl.PersonServiceImpl;
 import com.formacion.block7crudvalidation.controllers.dto.PersonInputDto;
 import com.formacion.block7crudvalidation.controllers.dto.PersonOutputDto;
 import com.formacion.block7crudvalidation.domain.CustomError;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/person")

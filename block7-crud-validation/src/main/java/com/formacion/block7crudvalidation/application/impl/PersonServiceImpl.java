@@ -1,5 +1,6 @@
-package com.formacion.block7crudvalidation.application;
+package com.formacion.block7crudvalidation.application.impl;
 
+import com.formacion.block7crudvalidation.application.PersonService;
 import com.formacion.block7crudvalidation.controllers.dto.PersonInputDto;
 import com.formacion.block7crudvalidation.controllers.dto.PersonOutputDto;
 import com.formacion.block7crudvalidation.domain.Person;
@@ -11,7 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PersonServiceImpl implements PersonService{
+public class PersonServiceImpl implements PersonService {
     @Autowired
     PersonRepository personRepository;
 
@@ -34,7 +35,8 @@ public class PersonServiceImpl implements PersonService{
             throw new EntityNotFoundException();
         } else {
         return personRepository.findById(id).orElseThrow()
-                .personToPersonOutputDto();}
+                .personToPersonOutputDto();
+        }
     }
 
     @Override

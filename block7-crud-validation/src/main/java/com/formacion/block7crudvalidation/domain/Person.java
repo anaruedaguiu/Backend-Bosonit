@@ -2,22 +2,20 @@ package com.formacion.block7crudvalidation.domain;
 
 import com.formacion.block7crudvalidation.controllers.dto.PersonInputDto;
 import com.formacion.block7crudvalidation.controllers.dto.PersonOutputDto;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.formacion.block7crudvalidation.controllers.dto.PersonStudentOutputDto;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.Date;
 
 @Entity
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Person {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
     private String username; //NOT NULL max-length: 10 min-length: 6
     private String password; //NOT NULL
@@ -30,6 +28,9 @@ public class Person {
     private Date created_date; //NOT NULL
     private String image_url;
     private Date termination_date;
+
+    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
+    private Student student;
 
     public Person(PersonInputDto personInputDto) {
         this.id = personInputDto.getId();
@@ -60,6 +61,24 @@ public class Person {
                 this.created_date,
                 this.image_url,
                 this.termination_date
+        );
+    }
+
+    public PersonStudentOutputDto personaStudentOutputDto(){
+        return new PersonStudentOutputDto(
+                this.id,
+                this.username,
+                this.password,
+                this.name,
+                this.surname,
+                this.company_email,
+                this.personal_email,
+                this.city,
+                this.active,
+                this.created_date,
+                this.image_url,
+                this.termination_date,
+                this.student.studentToStudentOutputSimpleDto()
         );
     }
 }
