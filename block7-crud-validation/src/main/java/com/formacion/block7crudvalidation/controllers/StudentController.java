@@ -1,13 +1,17 @@
 package com.formacion.block7crudvalidation.controllers;
 
 import com.formacion.block7crudvalidation.application.impl.StudentServiceImpl;
-import com.formacion.block7crudvalidation.controllers.dto.StudentInputDto;
-import com.formacion.block7crudvalidation.controllers.dto.StudentOutputFullDto;
+import com.formacion.block7crudvalidation.controllers.dto.input.StudentInputDto;
+import com.formacion.block7crudvalidation.controllers.dto.input.TeacherInputDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputFullDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.TeacherOutputFullDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/student")
@@ -16,9 +20,15 @@ public class StudentController {
     StudentServiceImpl studentServiceImpl;
 
     @PostMapping
-    public ResponseEntity<StudentOutputFullDto> addStudent(@RequestBody StudentInputDto student) throws Exception {
-        URI location = URI.create("/student");
-        return ResponseEntity.created(location).body(studentServiceImpl.addStudentFull(student));
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> addStudent(@RequestBody StudentInputDto studentInputDto) {
+        try {
+            Optional<StudentOutputFullDto> optional = studentServiceImpl.addStudentFull(studentInputDto);
+            return ResponseEntity.ok(optional.orElseThrow());
+        } catch (Exception e) {
+            String errorMessage = "Error: this person has already a role assigned" + e.getMessage();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);
+        }
     }
 
     @GetMapping(value="/{id}")

@@ -1,15 +1,14 @@
 package com.formacion.block7crudvalidation.domain;
 
-import com.formacion.block7crudvalidation.controllers.dto.StudentInputDto;
-import com.formacion.block7crudvalidation.controllers.dto.StudentOutputFullDto;
-import com.formacion.block7crudvalidation.controllers.dto.StudentOutputSimpleDto;
+import com.formacion.block7crudvalidation.controllers.dto.input.StudentInputDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputFullDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputSimpleDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -36,7 +35,11 @@ public class Student {
     @Column(name = "branch")
     private String branch;
 
-    @ManyToMany(mappedBy = "students")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="id_teacher")
+    private Teacher teacher;
+
+    @ManyToMany(mappedBy = "students") //falta poner cascade????????
     private Set<Student_Studies> studentStudies;
 
     public Student(StudentInputDto studentInputDto) {

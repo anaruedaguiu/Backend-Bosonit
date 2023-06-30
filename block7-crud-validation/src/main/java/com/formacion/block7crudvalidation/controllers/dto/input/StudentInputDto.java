@@ -1,4 +1,4 @@
-package com.formacion.block7crudvalidation.controllers.dto;
+package com.formacion.block7crudvalidation.controllers.dto.input;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

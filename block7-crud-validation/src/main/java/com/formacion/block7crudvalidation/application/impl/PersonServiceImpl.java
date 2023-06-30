@@ -1,20 +1,32 @@
 package com.formacion.block7crudvalidation.application.impl;
 
 import com.formacion.block7crudvalidation.application.PersonService;
-import com.formacion.block7crudvalidation.controllers.dto.PersonInputDto;
-import com.formacion.block7crudvalidation.controllers.dto.PersonOutputDto;
+import com.formacion.block7crudvalidation.controllers.dto.input.PersonInputDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.PersonOutputDto;
 import com.formacion.block7crudvalidation.domain.Person;
+import com.formacion.block7crudvalidation.domain.Student;
+import com.formacion.block7crudvalidation.domain.Teacher;
 import com.formacion.block7crudvalidation.exceptions.EntityNotFoundException;
 import com.formacion.block7crudvalidation.exceptions.UnprocessableEntityException;
 import com.formacion.block7crudvalidation.repository.PersonRepository;
+import com.formacion.block7crudvalidation.repository.StudentRepository;
+import com.formacion.block7crudvalidation.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PersonServiceImpl implements PersonService {
     @Autowired
     PersonRepository personRepository;
+    @Autowired
+    StudentRepository studentRepository;
+    @Autowired
+    TeacherRepository teacherRepository;
 
     @Override
     public PersonOutputDto addPerson(PersonInputDto person) throws UnprocessableEntityException {
@@ -30,19 +42,39 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public PersonOutputDto getPersonById(int id) throws EntityNotFoundException {
-        if(personRepository.findById(id).isEmpty()) {
-            throw new EntityNotFoundException();
-        } else {
-        return personRepository.findById(id).orElseThrow()
-                .personToPersonOutputDto();
+    public Object getPersonById(int id, String outputType) throws EntityNotFoundException {
+        Person person = personRepository.findById(id).orElseThrow();
+        if(outputType.equalsIgnoreCase("full") && person.getRole() != null) {
+            if(person.getRole().equalsIgnoreCase("student")) {
+                Student student = studentRepository.findByPerson(person);
+                person.setStudent(student);
+                return person.personToPersonStudentOutputDto();
+            }
+            if(person.getRole().equalsIgnoreCase("teacher")) {
+                Teacher teacher = teacherRepository.findByPerson(person);
+                person.setTeacher(teacher);
+                return person.personToPersonTeacherOutputDto();
+            }
         }
+        return person.personToPersonOutputDto();
     }
 
     @Override
-    public PersonOutputDto getPersonByUsername(String username) {
-        return personRepository.findByUsername(username).orElseThrow()
-                .personToPersonOutputDto();
+    public Object getPersonByUsername(String username, String outputType) {
+        Person person = personRepository.findByUsername(username).orElseThrow();
+        if(outputType.equalsIgnoreCase("full") && person.getRole() != null) {
+            if(person.getRole().equalsIgnoreCase("student")) {
+                Student student = studentRepository.findByPerson(person);
+                person.setStudent(student);
+                return person.personToPersonStudentOutputDto();
+            }
+            if(person.getRole().equalsIgnoreCase("teacher")) {
+                Teacher teacher = teacherRepository.findByPerson(person);
+                person.setTeacher(teacher);
+                return person.personToPersonTeacherOutputDto();
+            }
+        }
+        return person.personToPersonOutputDto();
     }
 
     @Override
@@ -51,6 +83,34 @@ public class PersonServiceImpl implements PersonService {
         return personRepository.findAll(pageRequest).getContent()
                 .stream()
                 .map(Person::personToPersonOutputDto).toList();
+    }
+
+    @Override
+    public Iterable<?> getAllPersonsFull(String outputType) {
+        List<Person> persons = personRepository.findAll();
+        List<Object> objectsPersons = new ArrayList<>();
+
+        for (Person person : persons) {
+            if(outputType.equalsIgnoreCase("full")) {
+                if(person.getRole() != null) {
+                    if(person.getRole().equalsIgnoreCase("student")) {
+                        Student student = studentRepository.findByPerson(person);
+                        person.setStudent(student);
+                        objectsPersons.add(person.personToPersonStudentOutputDto());
+                    } else if (person.getRole().equalsIgnoreCase("teacher")) {
+                        Teacher teacher = teacherRepository.findByPerson(person);
+                        person.setTeacher(teacher);
+                        objectsPersons.add(person.personToPersonTeacherOutputDto());
+                    }
+                }
+                 else {
+                    objectsPersons.add(person.personToPersonOutputDto());
+                }
+            } else {
+                objectsPersons.add(person.personToPersonOutputDto());
+            }
+        }
+        return objectsPersons;
     }
 
     @Override

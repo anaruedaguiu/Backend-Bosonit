@@ -1,17 +1,15 @@
-package com.formacion.block7crudvalidation.controllers.dto;
+package com.formacion.block7crudvalidation.controllers.dto.output;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.Date;
 
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonStudentOutputDto {
+public class PersonOutputDto {
     private int id;
     private String username; //NOT NULL max-length: 10 min-length: 6
     private String password; //NOT NULL
@@ -24,5 +22,5 @@ public class PersonStudentOutputDto {
     private Date created_date; //NOT NULL
     private String image_url;
     private Date termination_date;
-    private StudentOutputSimpleDto student;
+    private String role;
 }

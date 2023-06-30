@@ -1,8 +1,8 @@
 package com.formacion.block7crudvalidation.controllers;
 
 import com.formacion.block7crudvalidation.application.impl.PersonServiceImpl;
-import com.formacion.block7crudvalidation.controllers.dto.PersonInputDto;
-import com.formacion.block7crudvalidation.controllers.dto.PersonOutputDto;
+import com.formacion.block7crudvalidation.controllers.dto.input.PersonInputDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.PersonOutputDto;
 import com.formacion.block7crudvalidation.domain.CustomError;
 import com.formacion.block7crudvalidation.exceptions.EntityNotFoundException;
 import com.formacion.block7crudvalidation.exceptions.UnprocessableEntityException;
@@ -27,27 +27,31 @@ public class PersonController {
 
     // Find person by ID
     @GetMapping(value="/{id}")
-    public ResponseEntity<PersonOutputDto> getPersonById(@PathVariable int id) throws EntityNotFoundException {
-        personServiceImpl.getPersonById(id);
-        return ResponseEntity.ok().body(personServiceImpl.getPersonById(id));
+    public ResponseEntity<?> getPersonById(@PathVariable int id, @RequestParam(value = "outputType", defaultValue = "simple") String outputType) throws EntityNotFoundException {
+        Object person = personServiceImpl.getPersonById(id, outputType);
+        return ResponseEntity.ok().body(person);
     }
 
     // Find person by Username
     @GetMapping(value="/username/{username}")
-    public ResponseEntity<PersonOutputDto> getPersonByUsername(@PathVariable String username) {
-        try {
-            return ResponseEntity.ok().body(personServiceImpl.getPersonByUsername(username));
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<?> getPersonByUsername(@PathVariable String username, @RequestParam(value = "outputType", defaultValue = "simple") String outputType) {
+        Object person = personServiceImpl.getPersonByUsername(username, outputType);
+        return ResponseEntity.ok().body(person);
     }
 
     // List of all persons
     @GetMapping
-    public Iterable<PersonOutputDto> getAllPersons(
+    public ResponseEntity<?> getAllPersons(
             @RequestParam(defaultValue = "0", required = false) int pageNumber,
-            @RequestParam(defaultValue = "4", required = false) int pageSize) {
-        return personServiceImpl.getAllPersons(pageNumber, pageSize);
+            @RequestParam(defaultValue = "4", required = false) int pageSize,
+            @RequestParam(value = "outputType", defaultValue = "simple") String outputType){
+        if(outputType.equalsIgnoreCase("full")) {
+            Iterable<?> persons = personServiceImpl.getAllPersonsFull(outputType);
+            return ResponseEntity.ok().body(persons);
+        } else {
+            Iterable<PersonOutputDto> persons = personServiceImpl.getAllPersons(pageNumber, pageSize);
+            return ResponseEntity.ok().body(persons);
+        }
     }
 
     @DeleteMapping
@@ -58,7 +62,7 @@ public class PersonController {
 
     @PutMapping(value="/{id}")
     public ResponseEntity<PersonOutputDto> updatePersonById(@RequestBody PersonInputDto person, @PathVariable int id) throws EntityNotFoundException, UnprocessableEntityException {
-        personServiceImpl.getPersonById(person.getId());
+        personServiceImpl.updatePerson(person, id);
         return ResponseEntity.ok().body(personServiceImpl.updatePerson(person, id));
     }
 

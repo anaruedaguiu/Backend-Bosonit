@@ -1,19 +1,20 @@
 package com.formacion.block7crudvalidation.application.impl;
 
 import com.formacion.block7crudvalidation.application.StudentService;
-import com.formacion.block7crudvalidation.controllers.dto.PersonOutputDto;
-import com.formacion.block7crudvalidation.controllers.dto.StudentInputDto;
-import com.formacion.block7crudvalidation.controllers.dto.StudentOutputFullDto;
-import com.formacion.block7crudvalidation.controllers.dto.StudentOutputSimpleDto;
+import com.formacion.block7crudvalidation.controllers.dto.input.StudentInputDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputFullDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputSimpleDto;
 import com.formacion.block7crudvalidation.domain.Person;
 import com.formacion.block7crudvalidation.domain.Student;
+import com.formacion.block7crudvalidation.domain.Teacher;
 import com.formacion.block7crudvalidation.exceptions.EntityNotFoundException;
 import com.formacion.block7crudvalidation.repository.PersonRepository;
 import com.formacion.block7crudvalidation.repository.StudentRepository;
-import org.hibernate.action.internal.EntityActionVetoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -23,13 +24,16 @@ public class StudentServiceImpl implements StudentService {
     PersonRepository personRepository;
 
     @Override
-    public StudentOutputFullDto addStudentFull(StudentInputDto studentInputDto) throws  Exception {
+    public Optional<StudentOutputFullDto> addStudentFull(StudentInputDto studentInputDto) throws  Exception {
         Person person = personRepository.findById(studentInputDto.getId_person()).orElseThrow();
+        if(person.getRole() != null)
+            throw new Exception("This person has already a role assigned");
+        person.setRole("Student");
         Student student = new Student(studentInputDto);
-        person.setStudent(student);
+        /*person.setStudent(student);*/
         student.setPerson(person);
-        return studentRepository.save(student)
-                .studentToStudentOutputFullDto();
+        Student student1 = studentRepository.save(student);
+        return Optional.of(student1.studentToStudentOutputFullDto());
     }
 
     @Override
@@ -61,11 +65,16 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void deleteStudentById(Integer id) {
-        if(studentRepository.findById(id).isEmpty())
+    public void deleteStudentById(Integer id) throws EntityNotFoundException {
+        Optional<Student> studentOptional = studentRepository.findById(id);
+        if (studentOptional.isEmpty())
             throw new EntityNotFoundException();
-        Student student = studentRepository.findById(id).orElseThrow();
-        Person person = personRepository.findById(student.getPerson().getId()).orElseThrow();
+
+        Student student = studentOptional.get();
+        Person person = student.getPerson();
+        person.setRole(null);
+        personRepository.save(person);
+
         studentRepository.deleteById(id);
     }
 

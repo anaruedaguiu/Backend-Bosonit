@@ -1,4 +1,4 @@
-package com.formacion.block7crudvalidation.controllers.dto;
+package com.formacion.block7crudvalidation.controllers.dto.input;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonOutputDto {
+public class PersonInputDto {
     private int id;
     private String username; //NOT NULL max-length: 10 min-length: 6
     private String password; //NOT NULL

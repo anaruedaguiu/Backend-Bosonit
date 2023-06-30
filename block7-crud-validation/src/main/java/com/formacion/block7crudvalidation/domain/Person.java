@@ -1,8 +1,9 @@
 package com.formacion.block7crudvalidation.domain;
 
-import com.formacion.block7crudvalidation.controllers.dto.PersonInputDto;
-import com.formacion.block7crudvalidation.controllers.dto.PersonOutputDto;
-import com.formacion.block7crudvalidation.controllers.dto.PersonStudentOutputDto;
+import com.formacion.block7crudvalidation.controllers.dto.input.PersonInputDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.PersonOutputDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.PersonStudentOutputDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.PersonTeacherOutputDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,8 +30,12 @@ public class Person {
     private String image_url;
     private Date termination_date;
 
-    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "person")
     private Student student;
+
+    @OneToOne(mappedBy = "person")
+    private Teacher teacher;
+    private String role;
 
     public Person(PersonInputDto personInputDto) {
         this.id = personInputDto.getId();
@@ -60,11 +65,12 @@ public class Person {
                 this.active,
                 this.created_date,
                 this.image_url,
-                this.termination_date
+                this.termination_date,
+                this.role
         );
     }
 
-    public PersonStudentOutputDto personaStudentOutputDto(){
+    public PersonStudentOutputDto personToPersonStudentOutputDto(){
         return new PersonStudentOutputDto(
                 this.id,
                 this.username,
@@ -78,7 +84,27 @@ public class Person {
                 this.created_date,
                 this.image_url,
                 this.termination_date,
+                this.role,
                 this.student.studentToStudentOutputSimpleDto()
+        );
+    }
+
+    public PersonTeacherOutputDto personToPersonTeacherOutputDto() {
+        return new PersonTeacherOutputDto(
+                this.id,
+                this.username,
+                this.password,
+                this.name,
+                this.surname,
+                this.company_email,
+                this.personal_email,
+                this.city,
+                this.active,
+                this.created_date,
+                this.image_url,
+                this.termination_date,
+                this.role,
+                this.teacher.teacherToTeacherOutputSimpleDto()
         );
     }
 }

@@ -1,12 +1,14 @@
 package com.formacion.block7crudvalidation.application;
 
-import com.formacion.block7crudvalidation.controllers.dto.StudentInputDto;
-import com.formacion.block7crudvalidation.controllers.dto.StudentOutputFullDto;
-import com.formacion.block7crudvalidation.controllers.dto.StudentOutputSimpleDto;
+import com.formacion.block7crudvalidation.controllers.dto.input.StudentInputDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputFullDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputSimpleDto;
+
+import java.util.Optional;
 
 
 public interface StudentService {
-    StudentOutputFullDto addStudentFull(StudentInputDto student) throws  Exception;
+    Optional<StudentOutputFullDto> addStudentFull(StudentInputDto student) throws Exception;
     StudentOutputSimpleDto getStudentSimpleById(Integer id);
     StudentOutputFullDto getStudentFullById(Integer id);
     Iterable<StudentOutputFullDto> getAllStudents(int pageNumber, int pageSize);
