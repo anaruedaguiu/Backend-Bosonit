@@ -5,13 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeacherInputDto {
+public class SubjectsInputDto {
     private Integer id_teacher;
+    private String subject;
     private String comments;
-    private String branch;
-    private int id_person;
+    private Date initial_date;
+    private Date finish_date;
 }

@@ -5,9 +5,11 @@ import com.formacion.block7crudvalidation.controllers.TeacherController;
 import com.formacion.block7crudvalidation.controllers.dto.input.TeacherInputDto;
 import com.formacion.block7crudvalidation.controllers.dto.output.TeacherOutputFullDto;
 import com.formacion.block7crudvalidation.domain.Person;
+import com.formacion.block7crudvalidation.domain.Student;
 import com.formacion.block7crudvalidation.domain.Teacher;
 import com.formacion.block7crudvalidation.exceptions.EntityNotFoundException;
 import com.formacion.block7crudvalidation.repository.PersonRepository;
+import com.formacion.block7crudvalidation.repository.StudentRepository;
 import com.formacion.block7crudvalidation.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +23,8 @@ public class TeacherServiceImpl implements TeacherService {
     private TeacherRepository teacherRepository;
     @Autowired
     private PersonRepository personRepository;
+    @Autowired
+    StudentRepository studentRepository;
 
     @Override
     public TeacherOutputFullDto getTeacherById(int id) {
@@ -39,10 +43,22 @@ public class TeacherServiceImpl implements TeacherService {
             throw new Exception("This person has already a role assigned");
         person.setRole("Teacher");
         Teacher teacher = new Teacher(teacherInputDto);
-        /*person.setTeacher(teacher);*/
+        person.setTeacher(teacher);
         teacher.setPerson(person);
         Teacher teacher1 = teacherRepository.save(teacher);
         return Optional.of(teacher1.teacherToTeacherOutputFullDto());
+    }
+
+    @Override
+    public void addTeacherToStudent(int id_teacher, int id_student) {
+        Student student = studentRepository.findById(id_student).orElseThrow();
+        Teacher teacher = teacherRepository.findById(id_teacher).orElseThrow();
+
+        student.setTeacher(teacher);
+        teacher.getStudentList().add(student);
+
+        studentRepository.save(student);
+        teacherRepository.save(teacher);
     }
 
     @Override

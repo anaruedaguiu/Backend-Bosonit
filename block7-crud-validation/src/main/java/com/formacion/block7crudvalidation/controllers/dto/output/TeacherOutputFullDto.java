@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TeacherOutputFullDto {
-    private Integer id;
+    private Integer id_teacher;
     private String comments;
     private String branch;
     private PersonOutputDto personOutputDto;

@@ -4,17 +4,24 @@ import com.formacion.block7crudvalidation.application.StudentService;
 import com.formacion.block7crudvalidation.controllers.dto.input.StudentInputDto;
 import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputFullDto;
 import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputSimpleDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.SubjectsOutputDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.TeacherOutputFullDto;
 import com.formacion.block7crudvalidation.domain.Person;
 import com.formacion.block7crudvalidation.domain.Student;
+import com.formacion.block7crudvalidation.domain.Subjects;
 import com.formacion.block7crudvalidation.domain.Teacher;
 import com.formacion.block7crudvalidation.exceptions.EntityNotFoundException;
 import com.formacion.block7crudvalidation.repository.PersonRepository;
 import com.formacion.block7crudvalidation.repository.StudentRepository;
+import com.formacion.block7crudvalidation.repository.SubjectsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -22,6 +29,8 @@ public class StudentServiceImpl implements StudentService {
     StudentRepository studentRepository;
     @Autowired
     PersonRepository personRepository;
+    @Autowired
+    SubjectsRepository subjectsRepository;
 
     @Override
     public Optional<StudentOutputFullDto> addStudentFull(StudentInputDto studentInputDto) throws  Exception {
@@ -29,6 +38,7 @@ public class StudentServiceImpl implements StudentService {
         if(person.getRole() != null)
             throw new Exception("This person has already a role assigned");
         person.setRole("Student");
+
         Student student = new Student(studentInputDto);
         /*person.setStudent(student);*/
         student.setPerson(person);
@@ -91,4 +101,18 @@ public class StudentServiceImpl implements StudentService {
                     .studentToStudentOutputFullDto();
         }
     }
+
+    @Override
+    public StudentOutputSimpleDto getSubjectsListByStudent(int id_student) throws Exception {
+        Student student = studentRepository.findById(id_student).orElseThrow();
+        List<SubjectsOutputDto> subjectsList = subjectsRepository.findByIdStudent(id_student)
+                .stream()
+                .map(Subjects::subjectsToSubjectsOutputDto)
+                .toList();
+        Set<SubjectsOutputDto> subjectsSet = new HashSet<>(subjectsList);
+
+        return new StudentOutputSimpleDto(student.getId_student(), student.getNum_hours_week(),
+                student.getComments(), student.getBranch(), subjectsSet);
+    }
+
 }

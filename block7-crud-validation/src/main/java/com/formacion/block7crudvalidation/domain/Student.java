@@ -3,12 +3,16 @@ package com.formacion.block7crudvalidation.domain;
 import com.formacion.block7crudvalidation.controllers.dto.input.StudentInputDto;
 import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputFullDto;
 import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputSimpleDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.SubjectsOutputDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,7 +24,7 @@ import java.util.Set;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer id;
+    private Integer id_student;
 
     @OneToOne
     @JoinColumn(name = "id_person")
@@ -39,11 +43,11 @@ public class Student {
     @JoinColumn(name="id_teacher")
     private Teacher teacher;
 
-    @ManyToMany(mappedBy = "students") //falta poner cascade????????
-    private Set<Student_Studies> studentStudies;
+    @ManyToMany
+    private Set<Subjects> subjects;
 
     public Student(StudentInputDto studentInputDto) {
-        this.id = studentInputDto.getId();
+        this.id_student = studentInputDto.getId_student();
         Person person = new Person();
         person.setId(studentInputDto.getId_person());
         this.person = person;
@@ -54,7 +58,7 @@ public class Student {
 
     public StudentOutputFullDto studentToStudentOutputFullDto() {
         return new StudentOutputFullDto(
-                this.id,
+                this.id_student,
                 this.num_hours_week,
                 this.comments,
                 this.branch,
@@ -63,11 +67,16 @@ public class Student {
     }
 
     public StudentOutputSimpleDto studentToStudentOutputSimpleDto() {
+        List<SubjectsOutputDto> subjectsList = new ArrayList<SubjectsOutputDto>();
+        for(Subjects sub : subjects)
+            subjectsList.add(sub.subjectsToSubjectsOutputDto());
+        Set<SubjectsOutputDto> subjectsSet = new HashSet<>(subjectsList);
         return new StudentOutputSimpleDto(
-                this.id,
+                this.id_student,
                 this.num_hours_week,
                 this.comments,
-                this.branch
+                this.branch,
+                subjectsSet
         );
     }
 }

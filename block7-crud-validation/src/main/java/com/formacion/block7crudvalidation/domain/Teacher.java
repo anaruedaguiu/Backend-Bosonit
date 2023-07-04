@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -19,7 +20,7 @@ import java.util.List;
 public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer id;
+    private Integer id_teacher;
 
     @OneToOne
     @JoinColumn(name="id_person")
@@ -31,12 +32,12 @@ public class Teacher {
     @Column(name = "branch")
     private String branch;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Student> studentList;
+    @OneToMany(mappedBy = "teacher")
+    private Set<Student> studentList;
 
 
     public Teacher(TeacherInputDto teacherInputDto) {
-        this.id = teacherInputDto.getId();
+        this.id_teacher = teacherInputDto.getId_teacher();
         Person person = new Person();
         person.setId(teacherInputDto.getId_person());
         this.person = person;
@@ -46,7 +47,7 @@ public class Teacher {
 
     public TeacherOutputFullDto teacherToTeacherOutputFullDto() {
         return new TeacherOutputFullDto(
-                this.id,
+                this.id_teacher,
                 this.branch,
                 this.comments,
                 this.person.personToPersonOutputDto()
@@ -55,7 +56,7 @@ public class Teacher {
 
     public TeacherOutputSimpleDto teacherToTeacherOutputSimpleDto() {
         return new TeacherOutputSimpleDto(
-                this.id,
+                this.id_teacher,
                 this.branch,
                 this.comments
         );

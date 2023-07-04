@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface TeacherService {
     TeacherOutputFullDto getTeacherById(int id);
     Optional<TeacherOutputFullDto> addTeacher(TeacherInputDto teacherInputDto) throws Exception;
+    void addTeacherToStudent(int id_teacher, int id_student);
     void deleteTeacherById(int id) throws EntityNotFoundException;
     TeacherOutputFullDto updateTeacherById(TeacherInputDto teacherInputDto, int id);
     Iterable<TeacherOutputFullDto> getAllTeachers(int pageNumber, int pageSize);

@@ -33,6 +33,16 @@ public class TeacherController {
         }
     }
 
+    @PostMapping("/student")
+    public ResponseEntity<String> addTeacherToStudent(@RequestParam int id_teacher, @RequestParam int id_student) {
+        try {
+            teacherServiceImpl.addTeacherToStudent(id_teacher, id_student);
+            return ResponseEntity.ok().body("The teacher with id " + id_teacher + " was added successfully to student with id" + id_student);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Something went wrong");
+        }
+    }
+
     @GetMapping(value="/{id}")
     public ResponseEntity<TeacherOutputFullDto> getTeacherById(@PathVariable int id) {
         teacherServiceImpl.getTeacherById(id);
