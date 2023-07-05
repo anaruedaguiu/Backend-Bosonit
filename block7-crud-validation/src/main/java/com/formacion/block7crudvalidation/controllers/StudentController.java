@@ -4,6 +4,7 @@ import com.formacion.block7crudvalidation.application.impl.StudentServiceImpl;
 import com.formacion.block7crudvalidation.controllers.dto.input.StudentInputDto;
 import com.formacion.block7crudvalidation.controllers.dto.input.TeacherInputDto;
 import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputFullDto;
+import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputSimpleDto;
 import com.formacion.block7crudvalidation.controllers.dto.output.TeacherOutputFullDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -63,5 +65,25 @@ public class StudentController {
     public ResponseEntity<StudentOutputFullDto> updateStudentById(@RequestBody StudentInputDto student, @PathVariable Integer id) {
         studentServiceImpl.getStudentFullById(student.getId_person());
         return ResponseEntity.ok().body(studentServiceImpl.updateStudentFullById(student, id));
+    }
+
+    @PutMapping("/addSubjects/{id_student}")
+    public ResponseEntity<StudentOutputSimpleDto> addSubjectListToStudent(@PathVariable int id_student, @RequestParam("id_list") List<Integer> id_list) {
+        try {
+            studentServiceImpl.addSubjectListToStudent(id_student, id_list);
+            return ResponseEntity.ok().body(studentServiceImpl.getStudentSimpleById(id_student));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/removeSubjects/{id_student}")
+    public ResponseEntity<StudentOutputSimpleDto> removeSubjectListToStudent(@PathVariable int id_student, @RequestParam("id_list") List<Integer> id_list) {
+        try {
+            studentServiceImpl.removeSubjectListToStudent(id_student, id_list);
+            return ResponseEntity.ok().body(studentServiceImpl.getStudentSimpleById(id_student));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

@@ -14,14 +14,12 @@ import com.formacion.block7crudvalidation.exceptions.EntityNotFoundException;
 import com.formacion.block7crudvalidation.repository.PersonRepository;
 import com.formacion.block7crudvalidation.repository.StudentRepository;
 import com.formacion.block7crudvalidation.repository.SubjectsRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -101,18 +99,39 @@ public class StudentServiceImpl implements StudentService {
                     .studentToStudentOutputFullDto();
         }
     }
-
     @Override
-    public StudentOutputSimpleDto getSubjectsListByStudent(int id_student) throws Exception {
-        Student student = studentRepository.findById(id_student).orElseThrow();
-        List<SubjectsOutputDto> subjectsList = subjectsRepository.findByIdStudent(id_student)
-                .stream()
-                .map(Subjects::subjectsToSubjectsOutputDto)
-                .toList();
-        Set<SubjectsOutputDto> subjectsSet = new HashSet<>(subjectsList);
+    public StudentOutputSimpleDto addSubjectListToStudent(int id, List<Integer> id_list) throws Exception {
+        Student student = studentRepository.findById(id).orElseThrow();
 
-        return new StudentOutputSimpleDto(student.getId_student(), student.getNum_hours_week(),
-                student.getComments(), student.getBranch(), subjectsSet);
+        Set<Subjects> subjectsList = new HashSet<>();
+        for(Integer id_subject : id_list) {
+            Subjects subject = subjectsRepository.findById(id_subject).orElseThrow();
+            subjectsList.add(subject);
+        }
+
+        student.setSubjects(subjectsList);
+        studentRepository.save(student);
+
+        return student.studentToStudentOutputSimpleDto();
     }
 
+    @Override
+    public StudentOutputSimpleDto removeSubjectListToStudent(int id, List<Integer> id_list) throws Exception {
+        Student student = studentRepository.findById(id).orElseThrow();
+        Set<Subjects> subjectsList = student.getSubjects();
+
+        List<Subjects> subjectsToRemove = new ArrayList<>();
+
+        for(Subjects s :subjectsList) {
+            if(id_list.contains(s.getId_subject())) {
+                subjectsToRemove.add(s);
+            }
+        }
+
+        subjectsList.removeAll(subjectsToRemove);
+        student.setSubjects(subjectsList);
+
+        return studentRepository.save(student)
+                .studentToStudentOutputSimpleDto();
+    }
 }

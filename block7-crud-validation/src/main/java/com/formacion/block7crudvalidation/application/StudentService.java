@@ -6,6 +6,7 @@ import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputFu
 import com.formacion.block7crudvalidation.controllers.dto.output.StudentOutputSimpleDto;
 import com.formacion.block7crudvalidation.domain.Student;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,6 +19,6 @@ public interface StudentService {
     void deleteStudentById(Integer id);
     StudentOutputFullDto updateStudentFullById(StudentInputDto student, Integer id);
 
-    StudentOutputSimpleDto getSubjectsListByStudent(int id_student) throws Exception;
-    /*void deleteSubjectStudent(Integer id, Set<String> id_subjects) throws Exception;*/
+    StudentOutputSimpleDto addSubjectListToStudent(int id, List<Integer> id_list) throws Exception;
+    StudentOutputSimpleDto removeSubjectListToStudent(int id, List<Integer> id_list) throws Exception;
 }
