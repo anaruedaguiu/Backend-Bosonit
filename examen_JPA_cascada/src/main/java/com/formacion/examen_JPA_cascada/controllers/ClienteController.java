@@ -1,5 +1,6 @@
 package com.formacion.examen_JPA_cascada.controllers;
 
+import com.formacion.examen_JPA_cascada.application.ClienteService;
 import com.formacion.examen_JPA_cascada.application.impl.ClienteServiceImpl;
 import com.formacion.examen_JPA_cascada.controllers.input.ClienteInputDto;
 import com.formacion.examen_JPA_cascada.controllers.output.CabeceraFraOutputDto;
@@ -16,37 +17,37 @@ import java.util.HashMap;
 @RequestMapping("/cliente")
 public class ClienteController {
     @Autowired
-    ClienteServiceImpl clienteServiceImpl;
+    ClienteService clienteService;
     @Autowired
     ClienteRepository clienteRepository;
 
     @PostMapping
     public ResponseEntity<ClienteOutputDto> addCliente(@RequestBody ClienteInputDto clienteInputDto) {
         URI location = URI.create("/cliente");
-        return ResponseEntity.created(location).body(clienteServiceImpl.addCliente(clienteInputDto));
+        return ResponseEntity.created(location).body(clienteService.addCliente(clienteInputDto));
     }
 
     @GetMapping("/{idCliente}")
     public ResponseEntity<ClienteOutputDto> getCliente(@PathVariable int idCliente) throws Exception {
-        return ResponseEntity.ok().body(clienteServiceImpl.getClienteById(idCliente));
+        return ResponseEntity.ok().body(clienteService.getClienteById(idCliente));
     }
 
     @GetMapping
     public Iterable<ClienteOutputDto> getAllClientes(@RequestParam(defaultValue = "0", required = false) int pageNumber,
                                                      @RequestParam(defaultValue = "4", required = false) int pageSize) {
-        return clienteServiceImpl.getAllClientes(pageNumber, pageSize);
+        return clienteService.getAllClientes(pageNumber, pageSize);
     }
 
     @DeleteMapping
     public ResponseEntity<String> deleteCliente(@RequestParam int idCliente) {
-        clienteServiceImpl.deleteCliente(idCliente);
+        clienteService.deleteCliente(idCliente);
         return ResponseEntity.ok().body("Cliente con id: " + idCliente + " borrado satisfactoriamente.");
     }
 
     @PutMapping("/{idCliente}")
     public ResponseEntity<ClienteOutputDto> updateCliente(@PathVariable int idCliente, @RequestBody ClienteInputDto clienteInputDto) {
-        clienteServiceImpl.updateCliente(idCliente, clienteInputDto);
-        return ResponseEntity.ok().body(clienteServiceImpl.updateCliente(idCliente, clienteInputDto));
+        clienteService.updateCliente(idCliente, clienteInputDto);
+        return ResponseEntity.ok().body(clienteService.updateCliente(idCliente, clienteInputDto));
     }
 
     // Criteria Builder - muestra clientes filtrando por los campos

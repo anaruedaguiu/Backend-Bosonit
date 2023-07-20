@@ -1,5 +1,6 @@
 package com.formacion.examen_JPA_cascada.controllers;
 
+import com.formacion.examen_JPA_cascada.application.LineasFraService;
 import com.formacion.examen_JPA_cascada.application.impl.LineaFraServiceImpl;
 import com.formacion.examen_JPA_cascada.controllers.input.LineasFraInputDto;
 import com.formacion.examen_JPA_cascada.controllers.output.LineasFraOutputDto;
@@ -16,11 +17,11 @@ import java.net.URI;
 @RequestMapping("/linea")
 public class LineaFraController {
     @Autowired
-    LineaFraServiceImpl lineaFraServiceImpl;
+    LineasFraService lineasFraService;
 
     @PostMapping
     public ResponseEntity<LineasFraOutputDto> addLinea(@RequestBody LineasFraInputDto lineasFraInputDto) {
         URI location = URI.create("/linea");
-        return ResponseEntity.created(location).body(lineaFraServiceImpl.addLinea(lineasFraInputDto));
+        return ResponseEntity.created(location).body(lineasFraService.addLinea(lineasFraInputDto));
     }
 }

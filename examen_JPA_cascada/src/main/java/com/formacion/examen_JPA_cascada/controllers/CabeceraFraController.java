@@ -1,5 +1,6 @@
 package com.formacion.examen_JPA_cascada.controllers;
 
+import com.formacion.examen_JPA_cascada.application.CabeceraFraService;
 import com.formacion.examen_JPA_cascada.application.impl.CabeceraFraServiceImpl;
 import com.formacion.examen_JPA_cascada.controllers.input.CabeceraFraInputDto;
 import com.formacion.examen_JPA_cascada.controllers.input.LineasFraInputDto;
@@ -19,25 +20,25 @@ import java.util.List;
 @RequestMapping("/factura")
 public class CabeceraFraController {
     @Autowired
-    CabeceraFraServiceImpl cabeceraFraServiceImpl;
+    CabeceraFraService cabeceraFraService;
 
     // Obtener todas las facturas
     @GetMapping
     public List<CabeceraFraOutputDto> getAll() {
-        return cabeceraFraServiceImpl.getAll();
+        return cabeceraFraService.getAll();
     }
 
     // Borra la factura y sus líneas
     @DeleteMapping("/{idFra}")
-    public String deleteFra(@PathVariable int idFra) throws EntityNotFoundException { return cabeceraFraServiceImpl.deleteFra(idFra);
+    public String deleteFra(@PathVariable int idFra) throws EntityNotFoundException { return cabeceraFraService.deleteFra(idFra);
     }
 
     // Añade línea a fra existente
     @PostMapping("/linea/{idFra}")
     public ResponseEntity<CabeceraFraOutputDto> addLineaToFra(@PathVariable int idFra, @RequestBody LineasFraInputDto lineasFraInputDto) {
         try {
-            cabeceraFraServiceImpl.addLineaFra(idFra, lineasFraInputDto);
-            return ResponseEntity.ok().body(cabeceraFraServiceImpl.getFraById(idFra));
+            cabeceraFraService.addLineaFra(idFra, lineasFraInputDto);
+            return ResponseEntity.ok().body(cabeceraFraService.getFraById(idFra));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
@@ -58,7 +59,7 @@ public class CabeceraFraController {
     @PostMapping
     public ResponseEntity<?> addFra(@RequestBody CabeceraFraInputDto cabeceraFraInputDto) {
         URI location = URI.create("/factura");
-        return ResponseEntity.created(location).body(cabeceraFraServiceImpl.addFra(cabeceraFraInputDto));
+        return ResponseEntity.created(location).body(cabeceraFraService.addFra(cabeceraFraInputDto));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
