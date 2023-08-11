@@ -1,0 +1,51 @@
+version: "3.2"
+services:
+  eureka:
+    image: docker.io/library/eureka-naming-server:0.0.1-SNAPSHOT
+    build: ./eureka-naming-server
+    container_name: eureka
+    ports:
+      - "8761:8761"
+    networks:
+      - eureka_net
+  gateway:
+    image: docker.io/library/api-gateway:0.0.1-SNAPSHOT
+    container_name: gateway
+    build: ./api-gateway
+    depends_on:
+      - eureka
+    ports:
+      - "8082:8082"
+    environment:
+      UREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka
+    networks:
+      - eureka_net
+  back:
+    image: docker.io/library/demo:0.0.1-SNAPSHOT
+    container_name: backend
+    build: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_H2_CONSOLE_ENABLED: "true"
+      SPRING_H2_CONSOLE_PATH: /h2-console
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:backend
+      EUREKA_URI: http://eureka:8761/eureka
+    networks:
+      - eureka_net
+  back-front:
+    image: docker.io/library/backend-front:0.0.1-SNAPSHOT
+    container_name: back-front
+    build: ./backend-Front
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_H2_CONSOLE_ENABLED: "true"
+      SPRING_H2_CONSOLE_PATH: /h2-console
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:backend-front
+      EUREKA_URI: http://eureka:8761/eureka
+    networks:
+      - eureka_net
+networks:
+  eureka_net:
+    driver: bridge

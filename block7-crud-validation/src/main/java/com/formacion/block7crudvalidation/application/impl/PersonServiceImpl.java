@@ -33,7 +33,7 @@ public class PersonServiceImpl implements PersonService {
             throw new UnprocessableEntityException();
         }
         if(person.getPassword() == null || person.getName() == null || person.getCompany_email() == null || person.getPersonal_email() == null
-        || person.getCity() == null || person.getActive() == null || person.getCreated_date() == null) {
+                || person.getCity() == null || person.getActive() == null || person.getCreated_date() == null) {
             throw new UnprocessableEntityException();
         }
         return personRepository.save(new Person(person))
