@@ -2,18 +2,19 @@ package com.formacion.block17springbatch.config;
 
 import com.formacion.block17springbatch.domain.Resultado;
 import com.formacion.block17springbatch.error.ErrorCounterComponent;
-import com.formacion.block17springbatch.infrastructure.dto.TiempoDto;
 import com.formacion.block17springbatch.domain.Tiempo;
 import com.formacion.block17springbatch.domain.TiempoRiesgo;
-import com.formacion.block17springbatch.mapper.ResultadoRowMapper;
 import com.formacion.block17springbatch.mapper.TiempoRiesgoRowMapper;
 import com.formacion.block17springbatch.mapper.TiempoRowMapper;
 import com.formacion.block17springbatch.processor.ResultadoItemProcessor;
 import com.formacion.block17springbatch.processor.TiempoItemProcessor;
 import com.formacion.block17springbatch.processor.TiempoRiesgoItemProcessor;
+import com.formacion.block17springbatch.repository.TiempoRepository;
 import com.formacion.block17springbatch.writer.ResultadoItemWriter;
 import com.formacion.block17springbatch.writer.TiempoItemWriter;
 import com.formacion.block17springbatch.writer.TiempoRiesgoItemWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
@@ -27,8 +28,6 @@ import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,9 +46,11 @@ public class BatchConfig {
     private JobBuilderFactory jobBuilderFactory;
     @Autowired
     DataSource dataSource;
+    private static final Logger log = LoggerFactory.getLogger(BatchConfig.class);
 
     @Bean
     public FlatFileItemReader<Tiempo> tiempoReader() {
+        log.info("--> Iniciando lectura de registros desde el archivo prueba.csv");
         return new FlatFileItemReaderBuilder<Tiempo>()
                 .name("tiempoReader")
                 .resource(new ClassPathResource("prueba.csv"))
@@ -64,6 +65,7 @@ public class BatchConfig {
 
     @Bean
     public JdbcCursorItemReader<Tiempo> tiempoReaderDataBase(){
+        log.info("--> Lectura de objetos Tiempo de la base de datos");
         JdbcCursorItemReader<Tiempo> reader = new JdbcCursorItemReader<>();
         reader.setSql("SELECT * FROM tiempo");
         reader.setDataSource(dataSource);
@@ -75,6 +77,7 @@ public class BatchConfig {
 
     @Bean
     public JdbcCursorItemReader<TiempoRiesgo> tiempoRiesgoItemReader() {
+        log.info("--> Lectura de objetos Tiempo-Riesgo de la base de datos");
         JdbcCursorItemReader<TiempoRiesgo> reader = new JdbcCursorItemReader<>();
         reader.setSql("SELECT * FROM tiempo_riesgo");
         reader.setDataSource(dataSource);
@@ -86,6 +89,7 @@ public class BatchConfig {
 
     @Bean
     public JdbcCursorItemReader<Resultado> resultadoItemReader() {
+        log.info("--> Lectura de objetos Resultado de la base de datos. Cálculo de la tª media y nº de mediciones");
         JdbcCursorItemReader<Resultado> cursorItemReader = new JdbcCursorItemReader<>();
         cursorItemReader.setDataSource(dataSource);
         cursorItemReader.setSql(
@@ -125,8 +129,8 @@ public class BatchConfig {
 
     //Writers
     @Bean
-    public ItemWriter<Tiempo> tiempoItemWriter() {
-        return new TiempoItemWriter();
+    public ItemWriter<Tiempo> tiempoItemWriter(ErrorCounterComponent errorCounterComponent, TiempoRepository tiempoRepository) {
+        return new TiempoItemWriter(tiempoRepository, errorCounterComponent);
     }
 
     @Bean
@@ -146,13 +150,13 @@ public class BatchConfig {
 
     //Step
     @Bean
-    public Step stepTiempoCsv(ErrorCounterComponent errorCounterComponent) {
+    public Step stepTiempoCsv(ErrorCounterComponent errorCounterComponent, TiempoRepository tiempoRepository) {
         return stepBuilderFactory.get("step1")
                 .<Tiempo, Tiempo>chunk(5)
                 .reader(tiempoReader())
                 .processor(tiempoItemProcessor())
-                .writer(tiempoItemWriter())
-                .listener(errorCounterComponent)
+                .writer(new TiempoItemWriter(tiempoRepository, errorCounterComponent))
+                .listener(listener())
                 .build();
     }
 
@@ -177,11 +181,12 @@ public class BatchConfig {
     }
 
     @Bean
-    public Job jobCsvTiempo(ErrorCounterComponent errorCounterComponent) {
+    public Job jobCsvTiempo(ErrorCounterComponent errorCounterComponent, TiempoRepository tiempoRepository) {
+        System.out.println("- Este es el JOB -");
         return jobBuilderFactory.get("jobCsvTiempo")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener())
-                .flow(stepTiempoCsv(errorCounterComponent))
+                .flow(stepTiempoCsv(errorCounterComponent, tiempoRepository))
                 .next(stepRiesgoTiempo())
                 .next(stepResultados())
                 .end()
